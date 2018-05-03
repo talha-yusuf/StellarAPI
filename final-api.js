@@ -184,7 +184,7 @@ var sendToken = express.Router();
 sendToken.post('/', function(req,res,next){
     var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 
-    var sourceKey = 'GCYS7ET2LRLUQTFWCMENYBW6TPVJTKFBUNKENIXJXT22AH2NCCL6R2WG';
+    var sourceKey = req.body.source_keys;
     var issuingKeys = StellarSdk.Keypair.fromSecret(req.body.issuer_key);
     var receivingKeys = req.body.receiving_key;
     
