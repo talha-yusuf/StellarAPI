@@ -234,7 +234,7 @@ checkTrust.post('/', function (request, response){
   var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 
   var mkj = 'MKJ';
-  var mkjIssuer = 'GCYS7ET2LRLUQTFWCMENYBW6TPVJTKFBUNKENIXJXT22AH2NCCL6R2WG';
+  var mkjIssuer = 'GC2BWW4EJMWHGUT6KTPMER3CR7OUP7MIX62RVF3AOJEQFS4IYVHG6ACI';
 
   var accountId = request.body.account_id;
   server.loadAccount(accountId)
@@ -348,6 +348,28 @@ ethAddress.get('/', function(request, response){
     response.end(JSON.stringify(account));
 });
 app.use('/eth-address', ethAddress);
+
+// Check validation
+var checkAddr = express.Router();
+checkAddr.post('/', function (request, response){
+
+  var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+
+  var accountId = request.body.addr;
+  console.log("the adress is",accountId);
+
+  server.loadAccount(accountId)
+  .catch(StellarSdk.NotFoundError, function (error) {
+   // response.contentType('application/json');
+    response.end(JSON.stringify("unvalid")); 
+  })
+  .then(function() {
+   // response.contentType('application/json');
+    response.end(JSON.stringify("valid"));
+  })
+});
+app.use('/check-addr', checkAddr);
+
 
 // Listening port 3000
 if (module === require.main) {
