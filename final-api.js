@@ -12,7 +12,7 @@ app.use(bodyParser.json({type: 'application/json'}));
 var createKeyPair = express.Router();
 
 createKeyPair.get('/', function(req, res){
-  var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+  var server = new StellarSdk.Server('https://horizon.stellar.org');
   
   var pair = StellarSdk.Keypair.random();
   var secret_key = pair.secret();
@@ -23,18 +23,18 @@ createKeyPair.get('/', function(req, res){
   
   var keyPair = {'secret': secret_key, 'public': public_key};
   
-  request.get({
-      url: 'https://horizon-testnet.stellar.org/friendbot/',
-      qs: { addr: public_key },
-      json: true
-    }, function(error, response, body) {
-      if (error || response.statusCode !== 200) {
-        console.error('ERROR!', error || body);
-      }
-      else {
-        console.log('SUCCESS! You have a new account :)\n', body);
-      }
-  });    
+  // request.get({
+  //     url: 'https://horizon-testnet.stellar.org/friendbot/',
+  //     qs: { addr: public_key },
+  //     json: true
+  //   }, function(error, response, body) {
+  //     if (error || response.statusCode !== 200) {
+  //       console.error('ERROR!', error || body);
+  //     }
+  //     else {
+  //       console.log('SUCCESS! You have a new account :)\n', body);
+  //     }
+  // });    
   
   res.contentType('application/json');
   res.end(JSON.stringify(keyPair));
@@ -182,19 +182,27 @@ app.use('/create-token', createToken);
 
 var sendToken = express.Router();
 sendToken.post('/', function(req,res,next){
+  console.log("Something went wrong here")
     var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 
     var sourceKey = req.body.source_keys;
-    var issuingKeys = StellarSdk.Keypair.fromSecret(req.body.issuer_key);
-    var receivingKeys = req.body.receiving_key;
+    console.log("this is source key" ,sourceKey)
+    
+    var issuingKeys = StellarSdk.Keypair.fromSecret(req.body.issuing_keys);
+    console.log("this is distributor key" ,issuingKeys)
+    
+    var receivingKeys = req.body.receiving_keys;
+    console.log("this is receive key" ,receivingKeys)
+    
     
     var mkj = new StellarSdk.Asset('MKJ',sourceKey);
+   
+ 
 
     server.loadAccount(receivingKeys)
     .then(function(account) {
         var trusted = account.balances.some(function(balance) {
         console.log(balance);
-
         return balance.asset_code === 'MKJ' && balance.asset_issuer === sourceKey;
         });
         if(trusted===true){
