@@ -275,7 +275,7 @@ makeTrust.post('/', function (request, response){
   var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 
   // source account of the token
-  var sourceKey = 'GCYS7ET2LRLUQTFWCMENYBW6TPVJTKFBUNKENIXJXT22AH2NCCL6R2WG'; //StellarSdk.Keypair.fromSecret('SCQ32Y4DFG5GFRV3RSVBY5AI2MNNAI64WV52T43ANOCGH2NYHHKPC5IS');
+  var sourceKey = 'GC2BWW4EJMWHGUT6KTPMER3CR7OUP7MIX62RVF3AOJEQFS4IYVHG6ACI'; //StellarSdk.Keypair.fromSecret('SCQ32Y4DFG5GFRV3RSVBY5AI2MNNAI64WV52T43ANOCGH2NYHHKPC5IS');
 
   // account which is making trust with the token
   var investorkey = request.body.investor_key;
