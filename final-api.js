@@ -378,6 +378,27 @@ checkAddr.post('/', function (request, response){
 });
 app.use('/check-addr', checkAddr);
 
+var allTx = express.Router();
+allTx.post('/', function(request, response){
+    var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+
+    var accountId = request.body.account_id;
+    server.transactions()
+    .forAccount(accountId)
+    .call()
+    .then(function (accountResult) {
+        console.log(accountResult);
+        response.contentType('application/json');
+        response.end(JSON.stringify(accountResult));
+    })
+    .catch(function (err) {
+        console.error(err);
+        response.contentType('application/json');
+        response.end(JSON.stringify(err));
+    })
+});
+app.use('/all-transactions', allTx);
+
 
 // Listening port 3000
 if (module === require.main) {
