@@ -383,7 +383,9 @@ allTx.post('/', function(request, response){
     var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 
     var accountId = request.body.account_id;
-    server.transactions()
+    server.transactions({
+      limit: 100
+    })
     .forAccount(accountId)
     .call()
     .then(function (accountResult) {
