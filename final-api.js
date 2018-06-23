@@ -23,18 +23,18 @@ createKeyPair.get('/', function(req, res){
   
   var keyPair = {'secret': secret_key, 'public': public_key};
   
-  // request.get({
-  //     url: 'https://horizon-testnet.stellar.org/friendbot/',
-  //     qs: { addr: public_key },
-  //     json: true
-  //   }, function(error, response, body) {
-  //     if (error || response.statusCode !== 200) {
-  //       console.error('ERROR!', error || body);
-  //     }
-  //     else {
-  //       console.log('SUCCESS! You have a new account :)\n', body);
-  //     }
-  // });    
+  request.get({
+      url: 'https://horizon-testnet.stellar.org/friendbot/',
+      qs: { addr: public_key },
+      json: true
+    }, function(error, response, body) {
+      if (error || response.statusCode !== 200) {
+        console.error('ERROR!', error || body);
+      }
+      else {
+        console.log('SUCCESS! You have a new account :)\n', body);
+      }
+  });    
   
   res.contentType('application/json');
   res.end(JSON.stringify(keyPair));
@@ -45,7 +45,6 @@ app.use('/keypair', createKeyPair);
 // Get Balance
 var getBal = express.Router();
 getBal.post('/', function(request, res){
-    // var server = new StellarSdk.Server('https://horizon.stellar.org');  //For Mainnet
     var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
     var balanceList = [];
 
@@ -136,14 +135,14 @@ createToken.post('/', function(request, response){
   var receivingKeys = StellarSdk.Keypair.fromSecret(distributingSecret);
 
   // Create an object to represent the new asset
-  var mkj = new StellarSdk.Asset('MKJ', issuingKeys.publicKey());
+  var ccc = new StellarSdk.Asset('CCC', issuingKeys.publicKey());
 
   // First, the receiving account must trust the asset
   server.loadAccount(receivingKeys.publicKey())
     .then(function(receiver) {
       var transaction = new StellarSdk.TransactionBuilder(receiver)
         .addOperation(StellarSdk.Operation.changeTrust({
-          asset: mkj,
+          asset: ccc,
         }))
         .build();
       transaction.sign(receivingKeys);
@@ -158,7 +157,7 @@ createToken.post('/', function(request, response){
       var transaction = new StellarSdk.TransactionBuilder(issuer)
         .addOperation(StellarSdk.Operation.payment({
           destination: receivingKeys.publicKey(),
-          asset: mkj,
+          asset: ccc,
           amount: totolSupply
         }))
         .build();
@@ -195,7 +194,7 @@ sendToken.post('/', function(req,res,next){
     console.log("this is receive key" ,receivingKeys)
     
     
-    var mkj = new StellarSdk.Asset('MKJ',sourceKey);
+    var ccc = new StellarSdk.Asset('CCC',sourceKey);
    
  
 
@@ -203,7 +202,7 @@ sendToken.post('/', function(req,res,next){
     .then(function(account) {
         var trusted = account.balances.some(function(balance) {
         console.log(balance);
-        return balance.asset_code === 'MKJ' && balance.asset_issuer === sourceKey;
+        return balance.asset_code === 'CCC' && balance.asset_issuer === sourceKey;
         });
         if(trusted===true){
             console.log('trusted')
@@ -212,7 +211,7 @@ sendToken.post('/', function(req,res,next){
                 var transaction = new StellarSdk.TransactionBuilder(issuer)
                 .addOperation(StellarSdk.Operation.payment({
                     destination: receivingKeys,
-                    asset: mkj,
+                    asset: ccc,
                     amount: req.body.amount
                 }))
                 .build();
@@ -241,7 +240,7 @@ checkTrust.post('/', function (request, response){
 
   var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 
-  var mkj = 'MKJ';
+  var ccc = 'CCC';
   var mkjIssuer = 'GC2BWW4EJMWHGUT6KTPMER3CR7OUP7MIX62RVF3AOJEQFS4IYVHG6ACI';
 
   var accountId = request.body.account_id;
@@ -249,7 +248,7 @@ checkTrust.post('/', function (request, response){
   .then(function(account) {
     var trusted = account.balances.some(function(balance) {
       console.log(balance);
-      return balance.asset_code === mkj && balance.asset_issuer === mkjIssuer;
+      return balance.asset_code === ccc && balance.asset_issuer === mkjIssuer;
     })
     if(trusted){
       response.contentType('application/json');
@@ -281,14 +280,14 @@ makeTrust.post('/', function (request, response){
   var investorkey = request.body.investor_key;
   var receivingKeys = StellarSdk.Keypair.fromSecret(investorkey);
 
-  var mkj = new StellarSdk.Asset('MKJ', sourceKey);
+  var ccc = new StellarSdk.Asset('CCC', sourceKey);
 
   // change trust and submit transaction
   server.loadAccount(receivingKeys.publicKey())
     .then(function(receiver) {
       var transaction = new StellarSdk.TransactionBuilder(receiver)
         .addOperation(StellarSdk.Operation.changeTrust({
-          asset: mkj,
+          asset: ccc,
           //limit: '1000'
         }))
         .build();
@@ -404,7 +403,6 @@ app.use('/all-transactions', allTx);
 
 // Listening port 3000
 if (module === require.main) {
-    // Start the server
     var server = app.listen(process.env.PORT || 3000, function () {
         var port = server.address().port;
         console.log('App listening on port %s', port);
